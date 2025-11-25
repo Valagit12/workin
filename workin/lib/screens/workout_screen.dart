@@ -4,28 +4,26 @@ import 'package:hive_flutter/hive_flutter.dart';
 import '../models/workout.dart';
 
 class WorkoutScreen extends StatefulWidget {
-  const WorkoutScreen({super.key, required this.workoutKey});
+  const WorkoutScreen({super.key, required this.workout});
 
-  final int workoutKey; // can fields in dart be null and not final?
+  final Workout workout; // can fields in dart be null and not final?
 
   @override
   State<StatefulWidget> createState() => _WorkoutScreenState(); // why do it like this?
 }
 
 class _WorkoutScreenState extends State<WorkoutScreen> {
-  late Box<Workout> workoutsBox;
   late Workout workout;
 
   @override
   void initState() {
     super.initState();
-    workoutsBox = Hive.box<Workout>('workouts');
-    workout = workoutsBox.get(widget.workoutKey)!;
+    workout = widget.workout;
   }
 
   void _addSetToExercise(int exerciseIndex) {
     final exercise = workout.exercises[exerciseIndex];
-    exercise.sets.add(ExerciseSet(reps: 8, weight: 60, resttime: 90));
+    // exercise.sets.add(ExerciseSet(reps: 8, weight: 60, resttime: 90));
 
     workout.exercises[exerciseIndex] = exercise;
     workout.save();
@@ -53,7 +51,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                 children: [
                   const SizedBox(height: 16),
                   Text(
-                    exercise.name,
+                    exercise,
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -71,14 +69,16 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                   Expanded(
                     child: ListView.builder(
                       padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: exercise.sets.length,
+                      itemCount: exercise.length,
                       itemBuilder: (context, setIndex) {
-                        final set = exercise.sets[setIndex];
+                        final set = exercise;
                         return ListTile(
                           title: Text(
-                            'Set ${setIndex + 1} ${set.reps} reps @ ${set.weight}',
+                            // 'Set ${setIndex + 1} ${set.reps} reps @ ${set.weight}',
+                            'Set ',
                           ),
-                          subtitle: Text('Rest: ${set.resttime}'),
+                          // subtitle: Text('Rest: ${set.resttime}'),
+                          subtitle: Text('Rest: '),
                         );
                       },
                     ),

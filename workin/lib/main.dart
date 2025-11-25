@@ -13,8 +13,8 @@ Future<void> main() async {
   await Hive.initFlutter();
 
   Hive.registerAdapter(WorkoutAdapter());
-  Hive.registerAdapter(ExerciseAdapter());
-  Hive.registerAdapter(ExerciseSetAdapter());
+  // Hive.registerAdapter(ExerciseAdapter());
+  // Hive.registerAdapter(ExerciseSetAdapter());
 
   await Hive.openBox<Workout>('workouts');
 
