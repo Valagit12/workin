@@ -387,6 +387,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  nested_overscroll:
+    dependency: "direct main"
+    description:
+      name: nested_overscroll
+      sha256: "9b3bc06d28faf3f01f2dc3818b79c413efff75afcfd9d503314af3fff5754c4d"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.1"
   objective_c:
     dependency: transitive
     description:

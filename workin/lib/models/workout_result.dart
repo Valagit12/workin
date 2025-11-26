@@ -1,6 +1,6 @@
 import 'package:hive/hive.dart';
 
-part 'WorkoutResult.g.dart';
+part 'workout_result.g.dart';
 
 abstract class WorkoutObject {
   const WorkoutObject();
@@ -58,21 +58,10 @@ class WorkoutResult extends HiveObject {
   String id; // same as workout id
 
   @HiveField(1)
-  List<String> exercises;
-  // These lengths should be the same: exercises.length == setsAndReps.length
+  String name;
+
   @HiveField(2)
-  List<List<int>> setsAndReps;
-  // setsAndReps[0].length = number of sets for exercise exercises[0]
-  //setsAndReps[0][0] = number of reps done for first set of exercises[0]
+  List<WorkoutObject> workout;
 
-  @HiveField(3)
-  List<List<int>> rpePerSet;
-  //rpePerSet[0][0] = rpe of set setsAndReps[0][0]
-
-  @HiveField(1)
-  WorkoutResult({
-    required this.id,
-    required this.exercises,
-    required this.setsAndReps,
-  });
+  WorkoutResult({required this.id, required this.name, required this.workout});
 }

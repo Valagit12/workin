@@ -17,44 +17,42 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final workouts = Hive.box<Workout>('workouts');
 
-    return SafeArea(
-      child: Scaffold(
-        appBar: HomeAppBar(),
-        floatingActionButton: AddWorkoutButton(),
-        body: SafeArea(
-          child: Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 400),
-              child: ScrollConfiguration(
-                behavior: ScrollConfiguration.of(
-                  context,
-                ).copyWith(scrollbars: false),
-                child: ValueListenableBuilder<Box<Workout>>(
-                  valueListenable: workouts.listenable(),
-                  builder: (context, box, _) {
-                    final workouts = box.values.toList();
-                    return ListView(
-                      padding: const EdgeInsets.all(AppSpacing.medium),
-                      children: [
-                        const Text(
-                          'Today\'s Training',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 26,
-                            fontWeight: FontWeight.bold,
-                          ),
+    return Scaffold(
+      appBar: HomeAppBar(),
+      floatingActionButton: AddWorkoutButton(),
+      body: SafeArea(
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 400),
+            child: ScrollConfiguration(
+              behavior: ScrollConfiguration.of(
+                context,
+              ).copyWith(scrollbars: false),
+              child: ValueListenableBuilder<Box<Workout>>(
+                valueListenable: workouts.listenable(),
+                builder: (context, box, _) {
+                  final workouts = box.values.toList();
+                  return ListView(
+                    padding: const EdgeInsets.all(AppSpacing.medium),
+                    children: [
+                      const Text(
+                        'Today\'s Training',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
                         ),
-                        const SizedBox(height: AppSpacing.xSmall),
-                        const Text(
-                          'What do you want to do?',
-                          textAlign: TextAlign.center,
-                        ),
-                        for (var workout in workouts)
-                          WorkoutcardWidget(workout: workout),
-                      ],
-                    );
-                  },
-                ),
+                      ),
+                      const SizedBox(height: AppSpacing.xSmall),
+                      const Text(
+                        'What do you want to do?',
+                        textAlign: TextAlign.center,
+                      ),
+                      for (var workout in workouts)
+                        WorkoutcardWidget(workout: workout),
+                    ],
+                  );
+                },
               ),
             ),
           ),
