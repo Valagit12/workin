@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nested_overscroll/nested_overscroll.dart';
+
 import '../models/workout.dart';
 import '../models/workout_result.dart';
 
@@ -150,14 +151,13 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
   }
 
   Future<void> _saveWorkoutResult() async {
-    // Flatten all blocks into one list of WorkoutObject
     final List<WorkoutObject> allObjects = [];
     for (final block in _blocks) {
       allObjects.addAll(block.setsAndReps);
     }
 
     final result = WorkoutResult(
-      id: _workout.id, // assuming your Workout has an id field
+      id: _workout.id,
       name: _workout.name,
       workout: allObjects,
     );

@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hive/hive.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-import 'package:workin/screens/workout_screen.dart';
 import 'package:workin/widgets/add_workout_button.dart';
 import 'package:workin/widgets/home_app_bar.dart';
 import 'package:workin/widgets/workoutcard.dart';
 
 import '../appconstants.dart';
-import '../data/notifiers.dart';
 import '../models/workout.dart';
 
 class HomeScreen extends StatelessWidget {
@@ -45,7 +42,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                       const SizedBox(height: AppSpacing.xSmall),
                       const Text(
-                        'What do you want to do?',
+                        'What do you waantss to do?',
                         textAlign: TextAlign.center,
                       ),
                       for (var workout in workouts)

@@ -5,7 +5,10 @@ import 'package:workin/appconstants.dart';
 import '../models/workout.dart';
 
 class AddWorkoutScreen extends StatefulWidget {
-  const AddWorkoutScreen({super.key});
+  const AddWorkoutScreen({super.key, this.newWorkout = true, this.workout});
+
+  final bool newWorkout;
+  final Workout? workout;
 
   @override
   State<StatefulWidget> createState() => _AddWorkoutScreenState();
@@ -15,6 +18,23 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
   final List<TextEditingController> workoutInputControllers = [
     TextEditingController(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    final workout = widget.workout;
+    if (workout != null) {
+      workoutInputControllers.removeLast();
+      title.text = workout.name;
+
+      for (final exercise in workout.exercises) {
+        final TextEditingController ctrl = TextEditingController(
+          text: exercise,
+        );
+        workoutInputControllers.add(ctrl);
+      }
+    }
+  }
 
   final TextEditingController title = TextEditingController();
 
@@ -125,10 +145,8 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                     FloatingActionButton(
                       heroTag: 'main-fab',
                       onPressed: () async {
-                        // Close keyboard on submit tap
                         _dismissKeyboard();
 
-                        // Basic validation
                         if (title.text.isEmpty) {
                           setState(() => fixSubmission = true);
                           return;
@@ -143,14 +161,28 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                           exercises.add(controller.text);
                         }
 
-                        await workoutsBox.add(
-                          Workout(
-                            id: DateTime.now().millisecondsSinceEpoch
-                                .toString(),
-                            name: title.text,
-                            exercises: exercises,
-                          ),
+                        final savedWorkout = Workout(
+                          id: DateTime.now().millisecondsSinceEpoch.toString(),
+                          name: title.text,
+                          exercises: exercises,
                         );
+
+                        if (!widget.newWorkout) {
+                          if (widget.workout == null) {
+                            throw ArgumentError(
+                              'Cannot edit a non existant workout',
+                            );
+                          }
+                          workoutsBox.values
+                              .where((row) => row.id == widget.workout?.id)
+                              .forEach((row) async {
+                                row.exercises = exercises;
+                                row.name = title.text;
+                                await row.save();
+                              });
+                        } else {
+                          await workoutsBox.add(savedWorkout);
+                        }
 
                         if (context.mounted) {
                           Navigator.of(context).pop();

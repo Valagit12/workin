@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
-
-import 'package:workin/screens/workout_screen.dart';
+import 'package:workin/screens/add_workout_screen.dart';
 import 'package:workin/screens/workout_history_screen.dart';
+import 'package:workin/screens/workout_screen.dart';
 
 import '../appconstants.dart';
 import '../models/workout.dart';
@@ -91,17 +91,46 @@ class WorkoutcardWidget extends StatelessWidget {
                 Positioned(
                   top: 0,
                   right: 0,
-                  child: IconButton(
-                    icon: const Icon(Icons.history),
-                    tooltip: 'View past workouts',
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) =>
-                              WorkoutHistoryScreen(workout: workout),
-                        ),
-                      );
-                    },
+                  child: Row(
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.check),
+                        tooltip: 'Edit workout',
+                        onPressed: () {
+                          final resultBox = Hive.box<WorkoutResult>(
+                            'workout_results',
+                          );
+                          bool newWorkout = false;
+                          if (resultBox.values.any(
+                            (row) => row.id == workout.id,
+                          )) {
+                            debugPrint('new workout');
+                            newWorkout = true;
+                          }
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => AddWorkoutScreen(
+                                workout: workout,
+                                newWorkout: newWorkout,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+
+                      IconButton(
+                        icon: const Icon(Icons.history),
+                        tooltip: 'View past workouts',
+                        onPressed: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) =>
+                                  WorkoutHistoryScreen(workout: workout),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
               ],
