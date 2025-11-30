@@ -94,7 +94,7 @@ class WorkoutcardWidget extends StatelessWidget {
                   child: Row(
                     children: [
                       IconButton(
-                        icon: const Icon(Icons.check),
+                        icon: const Icon(Icons.edit),
                         tooltip: 'Edit workout',
                         onPressed: () {
                           final resultBox = Hive.box<WorkoutResult>(

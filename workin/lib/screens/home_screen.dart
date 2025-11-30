@@ -47,6 +47,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                       for (var workout in workouts)
                         WorkoutcardWidget(workout: workout),
+                      SizedBox(height: 100),
                     ],
                   );
                 },

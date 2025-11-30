@@ -49,6 +49,12 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     });
   }
 
+  void _removeSetFromExercise(int exerciseIndex, int itemIndex) {
+    setState(() {
+      _blocks[exerciseIndex].setsAndReps.removeAt(itemIndex);
+    });
+  }
+
   Future<void> _showAddSetDialog(int exerciseIndex) async {
     final exerciseName = _workout.exercises[exerciseIndex];
 
@@ -233,6 +239,12 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                                     : Icons.timer,
                               ),
                               title: Text(item.label),
+                              trailing: IconButton(
+                                onPressed: () {
+                                  _removeSetFromExercise(index, itemIndex);
+                                },
+                                icon: Icon(Icons.remove_circle),
+                              ),
                             );
                           },
                         ),

@@ -82,59 +82,75 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
         behavior: HitTestBehavior.opaque,
         onTap: _dismissKeyboard,
         child: Form(
-          child: ListView(
-            controller: _scrollController,
+          child: Column(
             children: [
+              // Title
               Container(
                 margin: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.large,
                   vertical: AppSpacing.large,
                 ),
-                child: SizedBox(
-                  child: TextFormField(
-                    controller: title,
-                    decoration: const InputDecoration(
-                      border: OutlineInputBorder(),
-                      labelText: 'Enter Name',
-                    ),
+                child: TextFormField(
+                  controller: title,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: 'Enter Name',
                   ),
                 ),
               ),
 
-              for (var workoutController in workoutInputControllers)
-                Container(
-                  margin: const EdgeInsets.all(AppSpacing.small),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Expanded(
-                        child: Container(
-                          padding: const EdgeInsets.all(AppSpacing.large),
-                          height: 100,
-                          child: TextFormField(
-                            controller: workoutController,
-                            decoration: const InputDecoration(
-                              labelText: 'Enter Exercise',
+              // Reorderable exercises
+              Expanded(
+                child: ReorderableListView.builder(
+                  padding: const EdgeInsets.only(bottom: AppSpacing.large),
+                  itemCount: workoutInputControllers.length,
+                  onReorder: (oldIndex, newIndex) {
+                    setState(() {
+                      if (newIndex > oldIndex) newIndex -= 1;
+                      final item = workoutInputControllers.removeAt(oldIndex);
+                      workoutInputControllers.insert(newIndex, item);
+                    });
+                  },
+                  itemBuilder: (context, index) {
+                    final controller = workoutInputControllers[index];
+
+                    return Container(
+                      key: ValueKey(controller), // important for reordering
+                      margin: const EdgeInsets.all(AppSpacing.small),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Container(
+                              padding: const EdgeInsets.all(AppSpacing.large),
+                              height: 100,
+                              child: TextFormField(
+                                controller: controller,
+                                decoration: const InputDecoration(
+                                  labelText: 'Enter Exercise',
+                                ),
+                              ),
                             ),
                           ),
-                        ),
+                          IconButton(
+                            icon: const Icon(Icons.remove_circle),
+                            onPressed: () {
+                              setState(() {
+                                workoutInputControllers.removeAt(index);
+                              });
+                            },
+                          ),
+                          const Icon(Icons.drag_handle), // drag handle
+                        ],
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.remove_circle),
-                        onPressed: () {
-                          setState(() {
-                            workoutInputControllers.remove(workoutController);
-                          });
-                        },
-                      ),
-                    ],
-                  ),
+                    );
+                  },
                 ),
+              ),
 
+              // Buttons row
               Container(
                 margin: const EdgeInsets.all(AppSpacing.large),
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     FloatingActionButton(
