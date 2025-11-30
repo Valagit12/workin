@@ -84,7 +84,6 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
         child: Form(
           child: Column(
             children: [
-              // Title
               Container(
                 margin: const EdgeInsets.symmetric(
                   horizontal: AppSpacing.large,
@@ -102,6 +101,7 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
               // Reorderable exercises
               Expanded(
                 child: ReorderableListView.builder(
+                  scrollController: _scrollController,
                   padding: const EdgeInsets.only(bottom: AppSpacing.large),
                   itemCount: workoutInputControllers.length,
                   onReorder: (oldIndex, newIndex) {
