@@ -139,7 +139,11 @@ class _AddWorkoutScreenState extends State<AddWorkoutScreen> {
                               });
                             },
                           ),
-                          const Icon(Icons.drag_handle), // drag handle
+                          ReorderableDragStartListener(
+                            index: index,
+                            child: const Icon(Icons.drag_handle),
+                          ),
+                          // drag handle
                         ],
                       ),
                     );
