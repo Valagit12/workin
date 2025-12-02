@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:nested_overscroll/nested_overscroll.dart';
 
+import '../appconstants.dart';
 import '../models/workout.dart';
 import '../models/workout_result.dart';
 
@@ -19,6 +20,10 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
 
   late List<WorkoutBlock> _blocks;
 
+  List<List<WorkoutObject>> workoutObjectsMap = [];
+
+  WorkoutResult? _lastResult;
+
   @override
   void initState() {
     super.initState();
@@ -27,6 +32,8 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     _blocks = _workout.exercises
         .map((_) => WorkoutBlock(setsAndReps: []))
         .toList();
+
+    _loadLastResult();
   }
 
   void _addSetToExercise(int exerciseIndex, ExerciseSet set) {
@@ -36,6 +43,51 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
     setState(() {
       _blocks[exerciseIndex] = updatedBlock;
     });
+  }
+
+  void _loadLastResult() {
+    final box = Hive.box<WorkoutResult>('workout_results');
+
+    final resultsForThisWorkout = box.values
+        .where((r) => r.id == _workout.id)
+        .toList();
+
+    if (resultsForThisWorkout.isEmpty) {
+      return;
+    }
+
+    setState(() {
+      _lastResult = resultsForThisWorkout.last;
+
+      List<WorkoutObject> lastResult = _lastResult!.workout;
+      String prevExercise = '';
+      int idx = -1;
+      for (WorkoutObject obj in lastResult) {
+        if (idx == -1) {
+          workoutObjectsMap.add([]);
+          idx++;
+        }
+
+        if (obj is ExerciseSet) {
+          if (prevExercise.isNotEmpty && prevExercise != obj.exercise) {
+            idx++;
+            workoutObjectsMap.add([]);
+          }
+          prevExercise = obj.exercise;
+          workoutObjectsMap[idx].add(obj);
+        } else if (obj is Rest) {
+          workoutObjectsMap[idx].add(obj);
+        }
+      }
+    });
+  }
+
+  List<WorkoutObject> _lastSetsForExercise(int exerciseIndex) {
+    return (workoutObjectsMap.isNotEmpty &&
+            workoutObjectsMap.length > exerciseIndex &&
+            workoutObjectsMap[exerciseIndex].isNotEmpty)
+        ? workoutObjectsMap[exerciseIndex].toList()
+        : [];
   }
 
   void _addRestToExercise(int exerciseIndex, Rest rest) {
@@ -201,6 +253,7 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
               final exerciseName = exercises[index];
               final block = _blocks[index];
               final items = block.setsAndReps;
+              final previousSets = _lastSetsForExercise(index);
 
               return Padding(
                 padding: const EdgeInsets.all(20),
@@ -209,11 +262,15 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                   child: Column(
                     children: [
                       const SizedBox(height: 16),
-                      Text(
-                        exerciseName,
-                        style: const TextStyle(
-                          fontSize: 24,
-                          fontWeight: FontWeight.bold,
+                      Container(
+                        padding: EdgeInsets.all(AppSpacing.small),
+                        child: Text(
+                          textAlign: TextAlign.center,
+                          exerciseName,
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
 
@@ -224,6 +281,47 @@ class _WorkoutScreenState extends State<WorkoutScreen> {
                       ),
 
                       const Divider(height: 24),
+
+                      if (previousSets.isNotEmpty) ...[
+                        const SizedBox(height: 16),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                'Last workout',
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                              const SizedBox(height: 8),
+                              SizedBox(
+                                height: 40,
+                                child: ListView.separated(
+                                  scrollDirection: Axis.horizontal,
+                                  itemCount: previousSets.length,
+                                  separatorBuilder: (_, __) =>
+                                      const SizedBox(width: 8),
+                                  itemBuilder: (context, i) {
+                                    final s = previousSets[i];
+                                    return Chip(
+                                      label: (s is ExerciseSet)
+                                          ? Text(
+                                              '${s.reps.toStringAsFixed(0)} reps '
+                                              '× ${s.weight.toStringAsFixed(1)} '
+                                              '(RPE ${s.rpe.toStringAsFixed(1)})',
+                                            )
+                                          : Text(
+                                              '${(s as Rest).getSeconds()}s of rest',
+                                            ),
+                                    );
+                                  },
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const Divider(height: 24),
+                      ],
 
                       Expanded(
                         child: ListView.builder(
