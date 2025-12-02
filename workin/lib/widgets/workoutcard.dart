@@ -68,70 +68,65 @@ class WorkoutcardWidget extends StatelessWidget {
           ),
           child: Padding(
             padding: const EdgeInsets.all(AppSpacing.small),
-            child: Stack(
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                Center(
+                IconButton(
+                  icon: const Icon(Icons.delete),
+                  tooltip: 'Delete workout',
+                  onPressed: () => _deleteWorkout(context),
+                ),
+
+                Expanded(
                   child: Text(
                     workout.name,
                     textAlign: TextAlign.center,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: const TextStyle(fontSize: 30),
                   ),
                 ),
 
-                Positioned(
-                  top: 0,
-                  left: 0,
-                  child: IconButton(
-                    icon: const Icon(Icons.delete),
-                    tooltip: 'Delete workout',
-                    onPressed: () => _deleteWorkout(context),
-                  ),
-                ),
-
-                Positioned(
-                  top: 0,
-                  right: 0,
-                  child: Row(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.edit),
-                        tooltip: 'Edit workout',
-                        onPressed: () {
-                          final resultBox = Hive.box<WorkoutResult>(
-                            'workout_results',
-                          );
-                          bool newWorkout = false;
-                          if (resultBox.values.any(
-                            (row) => row.id == workout.id,
-                          )) {
-                            debugPrint('new workout');
-                            newWorkout = true;
-                          }
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) => AddWorkoutScreen(
-                                workout: workout,
-                                newWorkout: newWorkout,
-                              ),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.edit),
+                      tooltip: 'Edit workout',
+                      onPressed: () {
+                        final resultBox = Hive.box<WorkoutResult>(
+                          'workout_results',
+                        );
+                        bool newWorkout = false;
+                        if (resultBox.values.any(
+                          (row) => row.id == workout.id,
+                        )) {
+                          debugPrint('new workout');
+                          newWorkout = true;
+                        }
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) => AddWorkoutScreen(
+                              workout: workout,
+                              newWorkout: newWorkout,
                             ),
-                          );
-                        },
-                      ),
+                          ),
+                        );
+                      },
+                    ),
 
-                      IconButton(
-                        icon: const Icon(Icons.history),
-                        tooltip: 'View past workouts',
-                        onPressed: () {
-                          Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (_) =>
-                                  WorkoutHistoryScreen(workout: workout),
-                            ),
-                          );
-                        },
-                      ),
-                    ],
-                  ),
+                    IconButton(
+                      icon: const Icon(Icons.history),
+                      tooltip: 'View past workouts',
+                      onPressed: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (_) =>
+                                WorkoutHistoryScreen(workout: workout),
+                          ),
+                        );
+                      },
+                    ),
+                  ],
                 ),
               ],
             ),

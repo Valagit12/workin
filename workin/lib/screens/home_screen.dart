@@ -20,7 +20,7 @@ class HomeScreen extends StatelessWidget {
       body: SafeArea(
         child: Center(
           child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 400),
+            constraints: const BoxConstraints(maxWidth: 800),
             child: ScrollConfiguration(
               behavior: ScrollConfiguration.of(
                 context,
